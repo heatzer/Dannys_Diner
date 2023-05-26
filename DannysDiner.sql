@@ -193,3 +193,35 @@ SELECT
 	SUM(TotalPoints) AS Points_with_first_week_promo
 FROM FirstWeekBonus
 GROUP BY customer_id
+
+-- Bonus Question
+
+WITH CTE AS (
+	SELECT 
+		sales.customer_id,
+		sales.order_date,
+		menu.product_name,
+		menu.price,
+		CASE
+			WHEN sales.order_date >= members.join_date THEN 'Y'
+			ELSE 'N'
+		END AS member
+	FROM dannys_diner..members
+	FULL OUTER JOIN dannys_diner..sales ON
+	sales.customer_id = members.customer_id
+	JOIN dannys_diner..menu ON
+	sales.product_id = menu.product_id
+)
+SELECT 
+	customer_id,
+	order_date,
+	product_name,
+	price,
+	member,
+	CASE
+		WHEN member = 'N' THEN null 
+		ELSE RANK() OVER (PARTITION BY customer_id,member ORDER BY order_date)
+	END ranking
+FROM CTE
+ORDER BY customer_id, order_date, product_name
+
