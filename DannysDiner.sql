@@ -150,9 +150,6 @@ WITH CTE AS (
 	FROM dannys_diner..sales
 	JOIN menu ON
 	sales.product_id = menu.product_id
-	JOIN members ON
-	sales.customer_id = members.customer_id
-	WHERE sales.order_date > members.join_date
 )
 SELECT 
 	customer_id, 
@@ -177,7 +174,7 @@ WITH CTE AS (
 	sales.product_id = menu.product_id
 	JOIN members ON
 	sales.customer_id = members.customer_id
-	WHERE sales.order_date > members.join_date
+	WHERE sales.order_date >= members.join_date
 ),
 FirstWeekBonus AS (
 	SELECT 
